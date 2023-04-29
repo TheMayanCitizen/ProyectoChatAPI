@@ -42,14 +42,17 @@ const getAllMessagesInConversation = (req, res) => {
 };
 
 const postNewConversation = (req, res) => {
+  const ownerId = req.user.id;
   const conversationObj = req.body;
   conversationsControllers
-    .createConversation(conversationObj)
+    .createConversation({ ...conversationObj, ownerId })
     .then((data) => {
+      if (!data)
+        return res.status(404).json({ message: "Guest ID does not exists" });
       res.status(201).json(data);
     })
     .catch((err) => {
-      res.status(400).json({ message: "Bad request", err });
+      res.status(400).json({ err: err.message });
     });
 };
 

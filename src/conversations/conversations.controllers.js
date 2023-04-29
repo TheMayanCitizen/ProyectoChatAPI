@@ -1,6 +1,7 @@
 const Conversations = require("../models/conversations.models");
 const uui = require("uuid");
 const Participants = require("../models/participants.models");
+const Users = require("../models/users.models");
 
 const findAllConverstaions = async () => {
   const conversations = await Conversations.findAll();
@@ -23,21 +24,35 @@ const findConverstionById = async (id) => {
   return data;
 };
 
-const createConversation = async (obj) => {
-  const data = await Conversations.create({
-    userId: obj.userId,
-    title,
-    imgUrl,
+const createConversation = async (conversationObj) => {
+  const userGuest = await Users.findOne({
+    where: {
+      id: conversationObj.guestId,
+    },
   });
+  if (!userGuest) return false;
+
+  const newConversations = await Conversations.create({
+    id: uui.v4(),
+    name: conversationObj.name,
+    profileImage: conversationObj.profileImage,
+    isGroup: conversationObj.isGroup,
+  });
+
   await Participants.create({
-    conversationId: data.id,
-    userId: obj.userId,
+    id: uui.v4(),
+    userId: conversationObj.ownerId,
+    conversationId: newConversations.id,
+    isAdmin: true,
   });
+
   await Participants.create({
-    conversationId: data.id,
-    userId: obj.participantId,
+    id: uui.v4(),
+    userId: conversationObj.guestId,
+    conversationId: newConversations.id,
+    isAdmin: false,
   });
-  return data;
+  return newConversations;
 };
 
 const updateConversation = async (conversationId, conversationObj) => {

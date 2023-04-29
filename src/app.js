@@ -46,5 +46,5 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/conversations", conversationsRouter);
 
 app.listen(config.api.port, () => {
-  console.log(`Server started on ${config.api.host}`);
+  console.log(`Server started on ${config.host}`);
 });

@@ -30,7 +30,7 @@ router
   );
 
 router.get(
-  "/:conversarion_id/messages",
+  "/:conversation_id/messages",
   JwtPassport.authenticate("jwt", { session: false }),
   conversationsServices.getAllMessagesInConversation
 );
